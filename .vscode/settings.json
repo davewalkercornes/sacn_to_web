@@ -1,0 +1,26 @@
+{
+    // Pretty documentation strings
+    "autoDocstring.docstringFormat": "numpy",
+    // Language, highlighting & analysis
+    "python.analysis.completeFunctionParens": true,
+    //    "python.languageServer": "Pylance",
+    // Common files need to be included
+    "python.analysis.typeCheckingMode": "basic",
+    "atlascode.jira.startWorkBranchTemplate.customPrefixes": [
+        "feature/",
+        "issue/",
+        "chore/"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "todo-tree.filtering.excludeGlobs": [
+        "**./.venv"
+    ]
+}

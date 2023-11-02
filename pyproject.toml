@@ -1,0 +1,75 @@
+[tool.poetry]
+name = "sacn-to-web"
+version = "0.1.0"
+description = "Converts DMX over sACN to a web based HTTP web service supporting multiple clients"
+authors = ["Dave Walker-Cornes <dave_dev@walkercornes.co.uk>"]
+readme = "README.md"
+packages = [{include = "sacn_to_web"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Flask = "^3.0.0"
+sacn = "^1.9.0"
+flask-sse = "^1.0.0"
+gunicorn = "^21.2.0"
+gevent = "^23.9.1"
+waitress = "^2.1.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+pytest = "^7.4.2"
+pylint = "^2.17.5"
+mypy = "^1.5.1"
+pytest-mock = "^3.11.1"
+pytest-cov = "^4.1.0"
+sphinx = "^7.2.6"
+sphinxcontrib-mermaid = "^0.9.2"
+types-requests = "^2.31.0.7"
+isort = "^5.12.0"
+types-pytz = "^2023.3.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.pylint.MASTER]
+ignore = ".venv"
+init-hook = "import sys; from pathlib import Path; sys.path.append(str(next(Path.cwd().glob('.venv/lib/*/site-packages'))))"
+#init-hook="import os;import sys;from pylint.config import find_default_config_files;dirs = [\"stack\", \"src\", os.path.join(\"src\", \"layers\", \"internal\")];root_dir = os.path.dirname(next(find_default_config_files()));sys.path.append(os.path.join(root_dir, dirs[0]));sys.path.append(os.path.join(root_dir, dirs[1]));sys.path.append(os.path.join(root_dir, dirs[2]));"
+
+[tool.pylint.FORMAT]
+max-line-length = 88
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = []
+
+# [tool.pylint.MISCELLANEOUS]
+# # [ ] Fix this so it works with poetry
+# # notes-rgx= "#'.*\[ ?\].*'"
+
+[tool.pytest.ini_options]
+python_files = "test_*.py"
+testpaths = ["src/layers/internal", "src/app"]
+required_plugins = ["pytest-cov", "pytest-html"]
+addopts = [
+    "--cov-config=.coveragerc",
+    "--cov=src",
+    "--cov-report=xml",
+    "--cov-report=html",
+    "--cov-append",
+]
+
+[tool.isort]
+profile = "black"
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+import_heading_stdlib = "Standard Library"
+import_heading_thirdparty = "Third Party Libraries"
+import_heading_firstparty = "Local"
+import_heading_localfolder = "Local"
+multi_line_output = 3
+line_length = 88
+
+[tool.coverage.run]
+omit = ["*/tests/*"]
