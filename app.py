@@ -37,7 +37,9 @@ def create_app():
         if flask.request.method == "POST":
             flask.session["fixture"] = flask.request.form["fixture"]
             return flask.redirect("/")
-        return flask.render_template("login.html")
+        return flask.render_template(
+            "login.html", fixture_id=flask.session.get("fixture", 1)
+        )
 
     @app.route("/stream")
     def route_stream():
@@ -47,16 +49,7 @@ def create_app():
 
     @app.route("/test")
     def route_test():
-        test_scan_data = {
-            "red": randrange(255),
-            "green": randrange(255),
-            "blue": randrange(255),
-        }
-        test_data = "#{:02x}{:02x}{:02x}".format(
-            test_scan_data["red"], test_scan_data["green"], test_scan_data["blue"]
-        )
-        pubsub.publish(test_data, "fixture:1")
-        return "DONE"
+        return flask.render_template("test.html")
 
     @app.route("/")
     def home():

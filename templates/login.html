@@ -3,15 +3,44 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <style>
     body {
-        max-width: 500px;
         margin: auto;
         padding: 1em;
+        text-align: center;
         background: #000;
-        color: #fff;
-        font: 16px/1.6 menlo, monospace;
+        color: #CCC;
+        font: 1.2em menlo, monospace;
+    }
+
+    input {
+        font: 2em menlo, monospace;
+    }
+
+    input[type="number"] {
+        width: 1.7em;
+    }
+
+    input[type="submit"] {
+        margin: auto;
+        width: 200px;
+        height: 200px;
+        background-color: rgba(128, 128, 128, 0.3);
+        border: 4px dashed #ccc;
+        border-radius: 50%;
+        font-size: 5em;
+        text-align: center;
+        line-height: 200px;
+        color: white;
+    }
+
+    input[type="submit"]:hover {
+        background-color: rgba(128, 128, 128, 0.7);
+        cursor: pointer;
     }
 </style>
 
 <body>
-    <form action="" method="post">Fixture number <input name="fixture">
+    <form action="" method="post">
+        <p>Fixture number <input name="fixture" type="number" class="num" value="{{ fixture_id }}"></p>
+        <input class="submit" type="submit" value="GO">
+    </form>
 </body>

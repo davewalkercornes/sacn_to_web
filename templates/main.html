@@ -18,9 +18,9 @@
             b = parseInt(hex.slice(4, 6), 16);
         if (bw) {
             // https://stackoverflow.com/a/3943023/112731
-            return (r * 0.299 + g * 0.587 + b * 0.114) > 186
-                ? '#333333'
-                : '#CCCCCC';
+            return (r * 0.299 + g * 0.587 + b * 0.114) > 150
+                ? '#333'
+                : '#CCC';
         }
         // invert color components
         r = (255 - r).toString(16);
@@ -30,23 +30,7 @@
         return "#" + padZero(r) + padZero(g) + padZero(b);
     }
 </script>
-<script>
-    var mouseIsDown = false;
 
-    window.addEventListener('mousedown', function () {
-        mouseIsDown = true;
-        setTimeout(function () {
-            if (mouseIsDown) {
-                // mouse was held down for > 3 seconds
-                window.location.href = '/login'
-            }
-        }, 3000);
-    });
-
-    window.addEventListener('mouseup', function () {
-        mouseIsDown = false;
-    });
-</script>
 <style>
     body {
         margin: auto;
@@ -54,18 +38,125 @@
         text-align: center;
         background: #000;
         color: #CCC;
-        font: 8px/1.6 menlo, monospace;
+        font: 1.2em menlo, monospace;
+    }
+
+    p,
+    div {
+        -webkit-touch-callout: none;
+        /* iOS Safari */
+        -webkit-user-select: none;
+        /* Safari */
+        -khtml-user-select: none;
+        /* Konqueror HTML */
+        -moz-user-select: none;
+        /* Old versions of Firefox */
+        -ms-user-select: none;
+        /* Internet Explorer/Edge */
+        user-select: none;
+        /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+
+    }
+
+    #item {
+        margin: auto;
+        width: 200px;
+        height: 200px;
+        background-color: rgba(128, 128, 128, 0.3);
+        border: 4px dashed #333;
+        border-radius: 50%;
+        font-size: 8em;
+        text-align: center;
+        line-height: 200px;
+    }
+
+    #item:hover {
+        background-color: rgba(128, 128, 128, 0.7);
+        cursor: pointer;
     }
 </style>
 
 <body>
     <p>Press and hold to get back to menu</p>
+    <div id="item"></div>
+    <div id="debug"></div>
+
     <script>
+        // The item (or items) to press and hold on
+        let item = document.querySelector("#item");
+        let dbg = document.querySelector("#debug")
+
+        let timerID;
+        let counter = 0;
+
+        let pressHoldEvent = new CustomEvent("pressHold");
+
+        // Increase or decreae value to adjust how long
+        // one should keep pressing down before the pressHold
+        // event fires
+        let pressHoldDuration = 180;
+
+        // Listening for the mouse and touch events    
+        item.addEventListener("mousedown", pressingDown, false);
+        item.addEventListener("mouseup", notPressingDown, false);
+        item.addEventListener("mouseleave", notPressingDown, false);
+
+        item.addEventListener("touchstart", pressingDown, false);
+        item.addEventListener("touchend", notPressingDown, false);
+
+        // Listening for our custom pressHold event
+        item.addEventListener("pressHold", doSomething, false);
+
+        function pressingDown(e) {
+            // Start the timer
+            requestAnimationFrame(timer);
+
+            e.preventDefault();
+            dbg.innerHTML = "Pressing!"
+            console.log("Pressing!");
+        }
+
+        function notPressingDown(e) {
+            // Stop the timer
+            cancelAnimationFrame(timerID);
+            counter = 0;
+            item.innerHTML = ""
+            dbg.innerHTML = "Not pressing!"
+            console.log("Not pressing!");
+        }
+
+        //
+        // Runs at 60fps when you are pressing down
+        //
+        function timer() {
+            console.log("Timer tick!");
+
+            if (counter <= pressHoldDuration) {
+                timerID = requestAnimationFrame(timer);
+                counter++;
+                item.innerHTML = 3 - Math.floor(counter / 60)
+            } else {
+                console.log("Press threshold reached!");
+                cancelAnimationFrame(timerID);
+                counter = 0;
+                item.innerHTML = ""
+                item.dispatchEvent(pressHoldEvent);
+            }
+        }
+
+        function doSomething(e) {
+            console.log("pressHold event fired!");
+            window.location.href = "/login";
+        }
+
+
+
         function sse() {
             var source = new EventSource('/stream');
             source.onmessage = function (e) {
                 document.body.style.background = e.data;
                 document.body.style.color = invertColor(e.data, true);
+                item.style.borderColor = invertColor(e.data, true);
             };
         }
 
