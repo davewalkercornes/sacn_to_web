@@ -55,7 +55,9 @@ def create_app():
     def home():
         if "fixture" not in flask.session:
             return flask.redirect("/login")
-        return flask.render_template("main.html")
+        resp = flask.make_response(flask.render_template("main.html"))
+        resp.headers.set("Cache-Control", "no-store, must-revalidate")
+        return resp
 
     return app
 

@@ -159,8 +159,11 @@
                 item.style.borderColor = invertColor(e.data, true);
             };
         }
-
-
         sse();
+
+
+        window.onbeforeunload = function () {
+            window.location.reload(true);
+        }
     </script>
 </body>
