@@ -84,7 +84,6 @@
     <script>
         // The item (or items) to press and hold on
         let item = document.querySelector("#item");
-        let dbg = document.querySelector("#debug")
 
         let timerID;
         let counter = 0;
@@ -112,7 +111,6 @@
             requestAnimationFrame(timer);
 
             e.preventDefault();
-            dbg.innerHTML = "Pressing!"
             console.log("Pressing!");
         }
 
@@ -121,7 +119,6 @@
             cancelAnimationFrame(timerID);
             counter = 0;
             item.innerHTML = ""
-            dbg.innerHTML = "Not pressing!"
             console.log("Not pressing!");
         }
 
@@ -157,6 +154,7 @@
                 document.body.style.background = e.data;
                 document.body.style.color = invertColor(e.data, true);
                 item.style.borderColor = invertColor(e.data, true);
+                item.style.color = invertColor(e.data, true);
             };
         }
         sse();
