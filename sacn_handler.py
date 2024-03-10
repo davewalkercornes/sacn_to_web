@@ -8,9 +8,9 @@ import sacn  # type: ignore # (no typing supported)
 # provide an IP-Address to bind to if you want to send multicast packets from a specific interface
 receiver = sacn.sACNreceiver()
 
-UNIVERSE = 1
-FIXTURE_COUNT = 9
-FIXTURE_LAYOUT = {1: "red", 2: "green", 3: "blue"}
+UNIVERSE = 3
+FIXTURE_COUNT = 12
+FIXTURE_LAYOUT = {1: "red", 2: "green", 3: "blue", 4: "gobo"}
 addresses_per_fixture = len(FIXTURE_LAYOUT)
 address_count = FIXTURE_COUNT * addresses_per_fixture
 
@@ -18,7 +18,7 @@ callback: Optional[Callable] = None
 
 
 # define a callback function
-@receiver.listen_on("universe", universe=1)  # listens on universe 1
+@receiver.listen_on("universe", universe=UNIVERSE)  # listens on universe 1
 def sacn_callback(packet: sacn.DataPacket):  # packet type: sacn.DataPacket
     if packet.dmxStartCode > 0:
         return

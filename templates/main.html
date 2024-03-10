@@ -32,13 +32,19 @@
 </script>
 
 <style>
+    html {
+        height: 100%;
+    }
+
     body {
-        margin: auto;
-        padding: 1em;
+        margin: 0px;
+        padding: 0px;
         text-align: center;
         background: #000;
         color: #CCC;
         font: 1.2em menlo, monospace;
+        height: 100%;
+        overflow: hidden;
     }
 
     p,
@@ -59,31 +65,40 @@
     }
 
     #item {
-        margin: auto;
-        width: 200px;
-        height: 200px;
-        background-color: rgba(128, 128, 128, 0.3);
+        width: 99%;
+        height: 60px;
+        background-color: rgba(128, 128, 128, 0.2);
         border: 4px dashed #333;
-        border-radius: 50%;
-        font-size: 8em;
+        border-radius: 20px;
+        font-size: 40px;
+        line-height: 60px;
         text-align: center;
-        line-height: 200px;
+        z-index: 10;
+        position: relative;
     }
 
     #item:hover {
         background-color: rgba(128, 128, 128, 0.7);
         cursor: pointer;
     }
+
+    #content {
+        color: rgb(255, 0, 0);
+        font-size: 100vh;
+        height: calc(100% - 64px);
+        line-height: calc(99% - 128px);
+    }
 </style>
 
 <body>
-    <p>Press and hold to get back to menu</p>
     <div id="item"></div>
     <div id="debug"></div>
+    <div id="content"></div>
 
     <script>
         // The item (or items) to press and hold on
         let item = document.querySelector("#item");
+        let content = document.querySelector("#content");
 
         let timerID;
         let counter = 0;
@@ -146,15 +161,26 @@
             window.location.href = "/login";
         }
 
-
-
         function sse() {
             var source = new EventSource('/stream');
             source.onmessage = function (e) {
-                document.body.style.background = e.data;
-                document.body.style.color = invertColor(e.data, true);
-                item.style.borderColor = invertColor(e.data, true);
-                item.style.color = invertColor(e.data, true);
+                config = JSON.parse(e.data)
+                if (config.m != "i") {
+                    document.body.style.background = config.c;
+                    content.style.color = "black"
+                } else {
+                    content.style.color = config.c
+                    document.body.style.background = "black"
+                }
+                if (config.m == "o") {
+                    content.innerHTML = ""
+                } else {
+                    content.innerHTML = config.l
+                }
+
+                document.body.style.color = invertColor(config.c, true);
+                item.style.borderColor = invertColor(config.c, true);
+                item.style.color = invertColor(config.c, true);
             };
         }
         sse();

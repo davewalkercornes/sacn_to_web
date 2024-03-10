@@ -1,4 +1,5 @@
 # Standard Library
+import json
 import logging
 import signal
 from random import randrange
@@ -23,7 +24,27 @@ def create_app():
             hex = "#{:02x}{:02x}{:02x}".format(
                 fixture["red"], fixture["green"], fixture["blue"]
             )
-            pubsub.publish(hex, f"fixture:{fixture_id+1}")
+            if fixture["gobo"] == 0:
+                gobo_mode = "o"
+                gobo_letter = ""
+            elif fixture["gobo"] <= 127:
+                gobo_mode = "c"
+                gobo_letter = chr(fixture["gobo"] + 32)
+            else:
+                gobo_mode = "i"
+                gobo_letter = chr(fixture["gobo"] - 95)
+            if len(gobo_letter) > 0 and ord(gobo_letter) > 126:
+                gobo_letter = ""
+            pubsub.publish(
+                json.dumps(
+                    {
+                        "c": hex,
+                        "m": gobo_mode,
+                        "l": gobo_letter,
+                    }
+                ),
+                f"fixture:{fixture_id+1}",
+            )
 
     sacn_handler.set_callback(sacn_callback)
     sacn_handler.start()
@@ -38,7 +59,10 @@ def create_app():
             flask.session["fixture"] = flask.request.form["fixture"]
             return flask.redirect("/")
         return flask.render_template(
-            "login.html", fixture_id=flask.session.get("fixture", 1)
+            "login.html",
+            fixture_id=flask.session.get(
+                "fixture", flask.request.cookies.get("fixture_id", 1)
+            ),
         )
 
     @app.route("/stream")
@@ -56,6 +80,7 @@ def create_app():
         if "fixture" not in flask.session:
             return flask.redirect("/login")
         resp = flask.make_response(flask.render_template("main.html"))
+        resp.set_cookie("fixture_id", flask.session["fixture"])
         resp.headers.set("Cache-Control", "no-store, must-revalidate")
         return resp
 
