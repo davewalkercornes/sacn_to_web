@@ -1,2 +1,3 @@
-#sacn_to_web
+# sacn_to_web
+
 Very rough and ready python app that hosts a web server.  The web server subscribes to a SACN universe and selected number of channels.  Each channel made up of 4 addresses.  The web server then allows connection from any device that has a webbrowser with the device specifying a channel number.  Once connected any lighting console that outputs SACN can independently control the screen(s) of any connected devices by the way of specifying an RGB color background (address 1,,2,3) and/or an ascii character (address 4).  The ascii character can be either on a black background in the sepcified colour or in black on the specified colour background.
